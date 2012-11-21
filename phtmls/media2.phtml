@@ -1,0 +1,421 @@
+<?php
+/**
+ * Magento Enterprise Edition
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Magento Enterprise Edition License
+ * that is bundled with this package in the file LICENSE_EE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.magentocommerce.com/license/enterprise-edition
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     enterprise_default
+ * @copyright   Copyright (c) 2009 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license     http://www.magentocommerce.com/license/enterprise-edition
+ */
+
+/**
+ * Product media data template
+ *
+ * @see Mage_Catalog_Block_Product_View_Media
+ */
+?>1111111
+<?php
+    $_product = $this->getProduct();
+    $_helper = $this->helper('catalog/output');
+    $_nativeZoom = false;
+	$_attribute_set = Mage::getModel('eav/entity_attribute_set')->load($_product->getAttributeSetId());
+    $isShowAttrPictView = true;
+    
+    if ($_product->isConfigurable())
+    {
+        $product_attributes = $_product->getTypeInstance(true)->getConfigurableAttributes($_product);
+        if ($product_attributes->getSize() == 1)
+        {
+            foreach ($product_attributes as $attribute)
+            {
+                if ($attribute->getProductAttribute()->getAttributeCode() == 'mj_shirt_size'){
+                    if ($_attribute_set->getAttributeSetName() == 'Apparel')
+                    {
+                        $isShowAttrPictView = false;
+                    }
+                }
+            }
+        }
+    }
+?>
+
+
+<?php if (!$_nativeZoom): ?>
+<?php /* --------- jqZoom --------- */ ?>
+    <?php if ($_product->getImage() != 'no_selection' && $_product->getImage()): ?>
+        <?php list($_imgWidth, $_imgHeight) = $this->helper('catalog/image')->init($_product, 'image')->getOriginalSizeArray(); ?>
+        <?php if ($_imgWidth > 180 && $_imgHeight > 180):?>
+			<div class="image-outer" style="overflow:hidden; position:relative;">
+            <a class="product-image image-zoom" id="main-image" title="<?php echo $this->htmlEscape($_product->getImageLabel()); ?>" href="<?php echo $this->helper('catalog/image')->init($_product, 'image'); ?>">
+                <?php
+                    $_img = '<img id="main-product-image" src="'.$this->helper('catalog/image')->init($_product, 'image')->resize(450, 262).'" alt="'.$this->htmlEscape($_product->getImageLabel()).'" title="'.$this->htmlEscape($_product->getImageLabel()).'" />';
+                    echo $_helper->productAttribute($_product, $_img, 'image-thumb');
+                ?>
+            </a>
+            <script type="text/javascript">
+            //<![CDATA[
+                jQuery(document).ready(function(){
+                    
+                    var options = {
+                            zoomType: 'reverse',//Values: standard, reverse
+                            zoomWidth: 479,
+                            zoomHeight: 278,
+                            //position: 'left',
+                            xOffset: 0,
+                            yOffset: -9,
+                            //imageOpacity: 0.6,
+                            title : false
+                    };
+                    jQuery('#main-image').unbind();
+                    jQuery('#main-image').jqzoom(options);
+                });
+            //]]>
+            </script>
+
+			</div>
+		<div class="grad"> 
+			<?php  if($_product->isConfigurable()): ?>
+                <?php if ($_attribute_set->getAttributeSetName() != 'Apparel'): ?>
+			    <p class="notice">
+			        <span><?php echo $this->__('Click on image to zoom'); ?></span>
+			    </p>
+                <?php endif ?>
+			    <p class="your-select">
+			        <span class="your-select" id="your-select"><?php echo $this->__('Color Shown: '); ?></span><span class="last" id="colorLabel"><?php echo $this->__(' Not selected'); ?></span>
+			    </p>
+            <?php endif; ?>
+			
+		</div>
+
+        <?php else: ?>
+            <p class="product-image">
+                <?php                             
+                    $_img = '<img id="main-product-image" src="'.$this->helper('catalog/image')->init($_product, 'image')->resize(450, 262).'" alt="'.$this->htmlEscape($_product->getImageLabel()).'" title="'.$this->htmlEscape($_product->getImageLabel()).'" />';
+                    echo $_helper->productAttribute($_product, $_img, 'image-thumb');
+                ?>
+	            <div class="grad">
+                    <?php  if($_product->isConfigurable()): ?>
+                        <?php if ($_attribute_set->getAttributeSetName() != 'Apparel'): ?>
+                        <p class="notice">
+                            <span><?php echo $this->__('Click on image to zoom'); ?></span>       
+                        </p>
+                        <?php endif ?>
+                        <p class="your-select">
+                            <span class="your-select" id="your-select"><?php echo $this->__('Color Shown: '); ?></span><span class="last" id="colorLabel"><?php echo $this->__(' Not selected'); ?></span>
+                        </p>
+                    <?php endif; ?>            
+                </div>
+
+            </p>
+        <?php endif; ?>
+
+    <?php else: ?>
+        <p class="product-image">
+<!--            <div class="product_img_zooming font-brandon">
+                <div class="product_img_zoom">ZOOM <a href="#">-</a> <a href="#">+</a></div>
+                <div class="product_img_rotate"><a href="#">360</a></div>
+            </div>-->
+            <?php
+                $_img = '<img id="main-product-image" src="'.$this->helper('catalog/image')->init($_product, 'image')->resize(555, 345).'" alt="'.$this->htmlEscape($_product->getImageLabel()).'" title="'.$this->htmlEscape($_product->getImageLabel()).'" />';
+                echo $_helper->productAttribute($_product, $_img, 'image');
+            ?>
+			<div class="grad">
+                <?php  if($_product->isConfigurable()): ?>
+                    <?php if ($_attribute_set->getAttributeSetName() != 'Apparel'): ?>
+                    <p class="notice">
+                        <span><?php echo $this->__('Click on image to zoom'); ?></span>      
+                    </p>
+                    <?php endif ?>
+                    <p class="your-select">
+                        <span class="your-select"  id="your-select"><?php echo $this->__('Color Shown: '); ?></span><span class="last" id="colorLabel"><?php echo $this->__(' Not selected'); ?></span>
+                    </p>
+                <?php endif; ?>
+            </div>
+        </p>
+    <?php endif; ?>
+
+<?php else: ?>
+
+<?php /* --------- native magento zoom --------- */ ?>
+
+    <?php if ($_product->getImage() != 'no_selection' && $_product->getImage()): ?>
+        <p class="product-image product-image-zoom">
+            <?php
+                $_img = '<img id="main-product-image" src="'.$this->helper('catalog/image')->init($_product, 'image').'" alt="'.$this->htmlEscape($this->getImageLabel()).'" title="'.$this->htmlEscape($this->getImageLabel()).'" />';
+                echo $_helper->productAttribute($_product, $_img, 'image');
+            ?>
+        </p>
+        <p class="zoom-notice" id="track_hint"><?php echo $this->__('Double click on above image to view full picture') ?></p>
+        <div class="zoom">
+            <img id="zoom_out" src="<?php echo $this->getSkinUrl('images/slider_btn_zoom_out.gif') ?>" alt="<?php echo $this->__('Zoom Out') ?>" title="<?php echo $this->__('Zoom Out') ?>" class="btn-zoom-out" />
+            <div id="track">
+                <div id="handle"></div>
+            </div>
+            <img id="zoom_in" src="<?php echo $this->getSkinUrl('images/slider_btn_zoom_in.gif') ?>" alt="<?php echo $this->__('Zoom In') ?>" title="<?php echo $this->__('Zoom In') ?>" class="btn-zoom-in" />
+        </div>
+        <script type="text/javascript">
+        //<![CDATA[
+            Event.observe(window, 'load', function() {
+                product_zoom = new Product.Zoom('main-product-image', 'track', 'handle', 'zoom_in', 'zoom_out', 'track_hint');
+            });
+        //]]>
+        </script>
+    <?php else: ?>
+        <p class="product-image">
+            <?php
+                $_img = '<img id="main-product-image" src="'.$this->helper('catalog/image')->init($_product, 'image')->resize(275).'" alt="'.$this->htmlEscape($_product->getImageLabel()).'" title="'.$this->htmlEscape($_product->getImageLabel()).'" />';
+                echo $_helper->productAttribute($_product, $_img, 'image');
+            ?>
+			<div class="grad">
+				
+                <?php  if($_product->isConfigurable()): ?>
+                    <?php if ($_attribute_set->getAttributeSetName() != 'Apparel'): ?>
+				    <p class="notice">
+                        <span><?php echo $this->__('Click on image to zoom'); ?></span>     
+                    </p>
+                    <?php endif ?>
+                <p class="your-select">
+                <span class="your-select" id="your-select"><?php echo $this->__('Color Shown: '); ?></span><span class="last" id="colorLabel"><?php echo $this->__(' Not selected'); ?></span>
+                </p>
+                <?php endif; ?>
+            </div>
+
+        </p>
+    <?php endif; ?>
+
+<?php /* --------- /native magento zoom --------- */ ?>
+<?php endif; ?>
+
+
+<?php /* ---------More views Lightbox gallery --------- */ ?>
+
+
+<?php if(!$_product->isGrouped()): ?>
+<!--<div class="more-views" id = "attr-pict-view" onmouseout="jqzoom_reactivate();">-->
+<div class="more-views" id="attr-pict-view" style="display:none"></div>
+<?php if (count($this->getGalleryImages()) > 0): ?>
+<div class="more-views more-views-2">
+    <h2 class="more-views-head"><?php echo $this->__('ADDITIONAL VIEWS') ?></h2>
+    <ul class="m-views">
+    <?php $i = 0; foreach ($this->getGalleryImages() as $_image): ?>
+        <li>
+            <!--<a href="#" onclick="popWin('<?php echo $this->getGalleryUrl($_image) ?>', 'gallery', 'width=300,height=300,left=50,top=50,location=no,status=yes,scrollbars=yes,resizable=yes'); return false;">
+			<img src="<?php echo $this->helper('catalog/image')->init($this->getProduct(), 'thumbnail', $_image->getFile())->resize(48, 48); ?>" width="48" height="48" 
+			alt="<?php echo $this->htmlEscape($_image->getLabel()) ?>" 
+			title="<?php echo $this->htmlEscape($_image->getLabel()) ?>" /></a>-->
+   
+           <img
+					onclick="jQuery('.breadcrumbs').css({'z-index':'-1'});
+                             var document_height = jQuery(document).height();
+                             jQuery('body').prepend('<div></div>').children('div:first').attr('id', 'popup_bg');
+                             jQuery('#popup_bg').css('height', document_height);
+                             ShowModalbox( 'r3-modalbox' , 'r3-product-page-modal-content');
+                             document.getElementById('prod-modal-main-img').src='<?php echo $this->helper('catalog/image')->init($this->getProduct(), 'thumbnail', $_image->getFile())->resize(698,426); ?>';/*  500*/
+                             hearlighting_border_gallery_images(<?php echo $i;?>,'.prod-modal-little-images');
+                             hearlighting_border(<?php echo $i;?>,'.mage-little-images');
+                         <?php if ($_product->getImage() != 'no_selection' && $_product->getImage())
+                                 {
+                                 // there are main image
+                                 echo "document.getElementById('main-product-image').src='".$this->helper('catalog/image')->init($this->getProduct(), 'thumbnail', $_image->getFile())->resize(450,262)."';";/*370*/
+                                 echo "document.getElementById('main-image').href='".$this->helper('catalog/image')->init($this->getProduct(), 'thumbnail', $_image->getFile())."';";/*1500*/
+                                 echo "jqzoom_reactivate();";
+                                 }
+                                 else
+                                 {
+                                 // there are NO main image
+                                 echo "document.getElementById('r3-product-page-modal-content').style.top = '100px';";
+                                 echo "document.getElementById('r3-product-page-modal-content').style.left = '30%';";
+                                 } ?>
+								"
+           class="mage-little-images" src="<?php echo $this->helper('catalog/image')->init($this->getProduct(), 'thumbnail', $_image->getFile())->resize(135, 85); ?>" alt="<?php echo $this->htmlEscape($_image->getLabel()) ?>" title="<?php echo $this->htmlEscape($_image->getLabel()) ?>" />
+           </a>
+           <!-- little picture -->
+
+        </li>
+    <?php $i++;  endforeach; ?>
+    </ul>
+</div>
+<?php endif ?>
+<?php endif ?>
+<!-- ######################################## -->
+
+<script type="text/javascript">
+
+//var StandartBorderWidth = '65px';
+//var StandartBorderHeight = '41px';
+
+var HearlightingBorderColor = "solid 1px #000";
+
+
+//var newdiv = document.createElement('div');
+//newdiv.setAttribute('id','r3-modalbox');
+//document.body.appendChild(newdiv); // create new diw -- to make shadow under modal-window
+
+
+function hearlighting_border(k,classname)
+{
+lim = $$(classname);
+for( i=0; i < lim.length; i++)
+ {
+ lim[i].style.border = 'none';
+ lim[i].style.margin= '0 7px 7px 0';
+ };
+ lim[k].style.border = HearlightingBorderColor;
+ lim[k].style.margin= '-1px 6px 6px -1px';
+}
+
+function hearlighting_border_gallery_images(k,classname)
+{
+lim = $$(classname);
+for( i=0; i < lim.length; i++)
+ {
+ lim[i].style.border = 'none';
+ lim[i].style.margin= '2px';
+ };
+ lim[k].style.border = HearlightingBorderColor;
+ lim[k].style.margin= '1px';
+}
+
+function ShowModalbox( BgBoxId, ContentBoxId ) {
+if (( BgBoxId == undefined )||( ContentBoxId == undefined ))
+{
+alert('Error when display modal window. R3 systems.');
+}
+else
+{
+document.getElementById( BgBoxId ).style.display = "block"; // shadow
+document.getElementById( ContentBoxId ).style.display = "block"; // content
+}
+}
+ 
+function HideModalbox( BgBoxId, ContentBoxId ) {
+if (( BgBoxId == undefined )||( ContentBoxId == undefined ))
+{
+alert('Error when display modal window. R3 systems.');
+}
+else
+{
+document.getElementById( BgBoxId ).style.display = "none"; // shadow
+document.getElementById( ContentBoxId ).style.display = "none"; // content
+}
+}
+
+var options = {
+    zoomType: 'reverse',//Values: standard, reverse
+    zoomWidth: 479,
+	zoomHeight: 278,
+	//position: 'left',
+    xOffset: 0,
+    yOffset: -9,
+    imageOpacity: 0.6,
+    title : false
+  };
+
+function jqzoom_reactivate()
+ {
+jQuery('#main-image').unbind();
+jQuery('#main-image').jqzoom(options);
+ }
+
+</script>
+
+<!-- modal window -->
+<?php //echo this->getSkinUrl() ?>
+<div  id="r3-product-page-modal-content">
+<table>
+<tr>
+	<td class="lt">
+	
+	</td>
+	<td>
+
+	</td>
+	<td class="rt">
+	
+	</td>
+</tr>
+<tr>
+	<td>
+	</td>
+	<td>
+		<div class="prod-modal-title">
+		<div class="prod-modal-name"><?php echo $_product->getName();?></div>
+		<div class="prod-modal-close" onclick="jQuery('#popup_bg').remove(); jqzoom_reactivate(); HideModalbox( 'r3-modalbox' , 'r3-product-page-modal-content' ); jQuery('.header-container1').attr({'class':'header-container'}); jQuery('.breadcrumbs').css({'z-index':'0'});"></div>
+		</div> 
+		
+
+ <div class="for-border">
+		<div class="prod-modal-sku">SKU: <?php echo Mage::Helper('catalog/product')->skuClearOutput($_product->getSku());?></div>
+
+		
+		<img id="prod-modal-main-img" src="<?php echo $this->helper('catalog/image')->init($_product, 'image')->resize(698,426) ?>" />
+ 
+ <!--<ul class="little-image">-->
+ <?php if (count($this->getGalleryImages()) > 0): ?>
+ <?php $i=0; foreach ($this->getGalleryImages() as $_image): ?>
+ <?php if ($i%9==0): ?>
+    <?php if ($i>0): ?>
+        </ul>
+    <?php endif ?>
+ <ul class="little-image">
+ <?php endif ?>
+ <li>
+	  <img class="prod-modal-little-images"
+	  onClick="
+	  document.getElementById('prod-modal-main-img').src='<?php echo $this->helper('catalog/image')->init($this->getProduct(), 'thumbnail', $_image->getFile())->resize(698,426); ?>'; 
+	  document.getElementById('main-product-image').src='<?php echo $this->helper('catalog/image')->init($this->getProduct(), 'thumbnail', $_image->getFile())->resize(450,262); ?>';
+	  
+	 document.getElementById('main-image').href='<?php echo $this->helper('catalog/image')->init($this->getProduct(), 'thumbnail', $_image->getFile());//->resize(); ?>';
+	 
+	  hearlighting_border_gallery_images(<?php echo $i;?>,'.prod-modal-little-images');
+	  hearlighting_border(<?php echo $i;?>,'.mage-little-images');
+
+	   "
+	  src="<?php echo $this->helper('catalog/image')->init($this->getProduct(), 'thumbnail', $_image->getFile())->resize(68,44); ?>" title="<?php echo $_product->getName();?>" alt="<?php echo $_product->getName();?>"/>
+</li>
+	 <?php $i++; endforeach; ?>
+	 <?php endif; ?>
+ </ul>
+ 
+ <div style="clear:both; height:0">&nbsp;</div> 
+ </div>
+
+	</td>	
+	<td>
+	
+	</td>
+</tr>
+<tr>
+	<td class="lb">
+	
+	</td>
+	<td>
+	
+	</td>
+
+	<td class="rb">
+	
+	</td>
+</tr>
+</table>
+</div>
+   
+
+
+<!-- modal window -->

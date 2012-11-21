@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+
+<config>   
+    <modules>
+        <Klec_Rotate>
+            <version>0.1.0</version>
+        </Klec_Rotate>
+    </modules>
+    <frontend>
+        <layout>
+             <updates>
+                  <rotate>
+                        <file>rotate.xml</file>
+                  </rotate>
+             </updates>
+        </layout>
+    </frontend>
+</config>
