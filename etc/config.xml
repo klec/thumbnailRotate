@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 
-<config>   
+<config>
     <modules>
         <Klec_Rotate>
             <version>0.1.0</version>
@@ -8,11 +8,40 @@
     </modules>
     <frontend>
         <layout>
-             <updates>
-                  <rotate>
-                        <file>rotate.xml</file>
-                  </rotate>
-             </updates>
+            <updates>
+                <rotate>
+                    <file>rotate.xml</file>
+                </rotate>
+            </updates>
         </layout>
     </frontend>
+    <global>
+        <events>
+            <core_block_abstract_prepare_layout_after>
+                <observers>
+                    <klec_rotate_image_tab>
+                        <type>model</type>
+                        <class>Klec_Rotate_Model_Observer</class>
+                        <method>addTab</method>
+                    </klec_rotate_image_tab>
+                </observers>
+            </core_block_abstract_prepare_layout_after>
+        </events>
+        <models>
+            <klec_rotate>
+                <class>Klec_Rotate_Model</class>
+            </klec_rotate>
+        </models>
+        <resources>
+            <rotate_setup>
+                <setup>
+                    <module>Klec_Rotate</module>
+                    <class>Klec_Rotate_Model_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </rotate_setup>
+        </resources>
+    </global>
 </config>
