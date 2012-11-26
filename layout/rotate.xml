@@ -1,0 +1,12 @@
+<layout version="0.1.0">
+    <catalog_product_view>
+
+        <reference name="product.info">
+
+        <remove name="product.info.media"/>
+            <block type="rotate/media" name="product.media.rotate" as="media" template="catalog/product/view/rotate.phtml"/>
+        <!--<block type="catalog/product_view_media" name="product.info.media" as="media" template="catalog/product/view/media.phtml"/>-->
+        </reference>
+
+    </catalog_product_view>
+</layout>

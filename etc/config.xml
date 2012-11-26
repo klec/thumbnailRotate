@@ -14,8 +14,14 @@
                 </rotate>
             </updates>
         </layout>
+
     </frontend>
     <global>
+        <blocks>
+            <rotate>
+                <class>Klec_Rotate_Block</class>
+            </rotate>
+        </blocks>
         <events>
             <core_block_abstract_prepare_layout_after>
                 <observers>
