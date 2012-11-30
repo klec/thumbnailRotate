@@ -20,7 +20,7 @@ class Klec_Rotate_Model_Setup extends Mage_Eav_Model_Entity_Setup
         $attr = array(
             'backend' => 'catalog/product_attribute_backend_media',
             'type' => 'varchar',
-            'input' => 'gallery',
+            'input' => 'rotate',
             'label' => 'Rotate gallery',
             'source' => 'eav/entity_attribute_source_boolean',
             'required' => 0,

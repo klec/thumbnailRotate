@@ -20,4 +20,15 @@ class Klec_Rotate_Model_Observer extends Mage_Core_Model_Abstract
         //echo $observer;
     }
 
+    public function addAttributeType(Varien_Event_Observer $observer)
+    {
+        //echo $observer;
+        $response = $observer->getResponse();
+        $types = $response->getTypes();
+        $types["rotate"]= Mage::getConfig()->getBlockClassName('rotate/form_gallery');
+        $response->setTypes($types);
+    }
+
+
+
 }
