@@ -2,93 +2,116 @@
 /**
  * Template for block Klec_Rotate_Block_Form_Gallery
  */
-?>
-<?php
 $_block = $this;
 /* @var $_block Mage_Adminhtml_Block_Catalog_Product_Helper_Form_Gallery_Content */
 ?>
-<div id="<?php echo $_block->getHtmlId() ?>" >
+<div id="<?php echo $_block->getHtmlId() ?>">
     <div class="grid">
         <div style="text-align: center">
             <img id="big_img" src="" width="500" alt="sample">
         </div>
-        <div id="block_images"  style="position: relative; height: 152px;"></div>
-        <?php //echo $_block->getUploaderHtml() ?>
+        <div  id="<?php echo $_block->getHtmlId() ?>_list" class="image_wrapper" style="position: relative; height: 152px;">
+            <img src="" id="<?php echo $_block->getHtmlId() ?>_template" class="template no-display" alt="">
+        </div>
+        <span id="<?php echo $_block->getHtmlId() ?>-image-0" class="no-display">
+            <span class="cell-image input a-center no-display">
+                <input type="radio"  name="image" value="no_selection" />
+            </span>
+            <span class="cell-thumbnail input a-center no-display">
+                <input type="radio"  name="thumbnail" value="no_selection" />
+            </span>
+            <span class="cell-small_image input a-center no-display">
+                <input type="radio"  name="small_image" value="no_selection" />
+            </span>
+        </span>
         <?php echo $_block->getUploaderHtml() ?>
     </div>
 </div>
-<input type="hidden" id="<?php echo $_block->getHtmlId() ?>_save" name="<?php echo $_block->getElement()->getName() ?>[images]" value="<?php echo $_block->htmlEscape($_block->getImagesJson()) ?>" />
-<input type="hidden" id="<?php echo $_block->getHtmlId() ?>_save_image" name="<?php echo $_block->getElement()->getName() ?>[values]" value="<?php echo $_block->htmlEscape($_block->getImagesValuesJson()) ?>" />
+<input type="hidden" id="<?php echo $_block->getHtmlId() ?>_save"
+       name="<?php echo $_block->getElement()->getName() ?>[images]"
+       value="<?php echo $_block->htmlEscape($_block->getImagesJson()) ?>"/>
+<input type="hidden" id="<?php echo $_block->getHtmlId() ?>_save_image"
+       name="<?php echo $_block->getElement()->getName() ?>[values]"
+       value="<?php echo $_block->htmlEscape($_block->getImagesValuesJson()) ?>"/>
 <script type="text/javascript">
-var images = <?php echo $_block->getImagesJson() ?>;
-var image_wraper = $('block_images');
-var step = ($('page:main-container').measure('width')-330)/images.length;
-var dragObject = {};
-images.each(function(img,id){
-    image_wraper.insert(
-        new Element('img', {src: img.url, style:'height:150px; position:absolute; left:'+id*step+'px'})
-            .observe('mouseover',function(){
-                $('big_img').setAttribute('src',this.readAttribute('src'));
-                this.style.zIndex = "10";
-            }).observe('mouseout',function(){
-                $('big_img').setAttribute('src',this.readAttribute('src'));
-                this.style.zIndex = "1";
-            }).observe('mousedown',function(e,id){
-
-                dragObject = this;
-                e = fixEvent(e);
-                dragObject.downX = e.pageX;
-                dragObject.id = getId(this);
-                e.preventDefault ? e.preventDefault() : e.returnValue = false
-            }).observe('mouseup',function(e){
-                dragObject = {};
-                order();
-            }).observe('mousemove',function(e){
-                e.preventDefault ? e.preventDefault() : e.returnValue = false
-                if(dragObject == this){
-                    e = fixEvent(e);
-                    dragObject.style.left = parseInt(dragObject.style.left) + e.pageX - dragObject.downX + "px";
-                    dragObject.downX = e.pageX;
-
-                }
-                // @todo check order
-            })
-    );
-})
-    if(images[0]){
-        $('big_img').setAttribute('src',images[0].url);
-    }
-images = $$('#block_images IMG');
-
-function fixEvent(e) {
-            e = e || window.event
-
-    	    if ( e.pageX == null && e.clientX != null ) {
-    	        var html = document.documentElement
-                var body = document.body
-                e.pageX = e.clientX +
-                    (html && html.scrollLeft || body && body.scrollLeft || 0) -
-                    (html.clientLeft || 0);
-
+    Element.addMethods({
+        move:function (element) {
+            if (dragObject.previous() && parseInt(dragObject.previous().style.left) > parseInt(dragObject.style.left)) {
+                temp = dragObject.previous();
+                dragObject.previous().remove();
+                dragObject.insert({'after':temp});
+                dragObject.next().style.left = dragObject.next().getId() * step + "px";
             }
-            return e
-    	}
-
-function order() {
-    images.each(function(img, id){
-        if(images[id-1] && parseInt(images[id].style.left)<parseInt(images[id-1].style.left)){
-            temp = images[id];
-            images[id] = images[id-1];
-            images[id-1] = temp;
+            if (dragObject.next() && parseInt(dragObject.next().style.left) < parseInt(dragObject.style.left)) {
+                temp = dragObject.next();
+                dragObject.next().remove();
+                dragObject.insert({'before':temp});
+                dragObject.previous().style.left = dragObject.previous().getId() * step + "px";
+            }
+        },
+        getId:function (element) {
+            images = $$('.image_wrapper IMG');
+            for (var i in images) {
+                if (images[i] === element) return i;
+            }
+            return -1;
         }
     })
-    images.each(function(img, id){
-        img.style.left = id*step + "px";
-    })
-}
 
-function getId(valeur) {
-    for (var i in images) { if (images[i] === valeur) return i+1; }
-    return 0;
-}
+    //<?php echo $_block->getJsObjectName(); ?>.updateImages = function(){alert('1');}
+    var images = <?php echo $_block->getImagesJson() ?>;
+    var image_wraper = $('<?php echo $_block->getHtmlId() ?>_list');
+    var step = parseInt(($('page:main-container').measure('width') - 400) / images.length);
+    var dragObject = {};
+    RotateGallery = Class.create(Product.Gallery,{
+        createImageRow: function(img) {
+            image_wraper.insert(
+                new Element('img', {src:img.url, style:'height:150px; position:absolute;' })
+                    .observe('mouseover', function () {
+                        $('big_img').setAttribute('src', this.readAttribute('src'));
+                        this.style.zIndex = "10";
+                    }).observe('mouseout', function () {
+                        this.style.zIndex = "1";
+                    }).observe('mousedown', function (e) {
+                        dragObject = this;
+                        e = fixEvent(e);
+                        dragObject.downX = e.pageX;
+                    }).observe('mouseup', function (e) {
+                        dragObject.style.left = dragObject.getId() * step + "px";
+                        dragObject = {};
+                    }).observe('mousemove', function (e) {
+                        if (dragObject.downX) {
+                            e = fixEvent(e);
+                            dragObject.style.left = parseInt(dragObject.style.left) + e.pageX - dragObject.downX + "px";
+                            dragObject.downX = e.pageX;
+                            dragObject.move();
+                        }
+                    })
+            );
+        },
+        updateVisualisation: function(){
+            $$('.image_wrapper IMG').each(function(img, id){
+                step = parseInt(($('page:main-container').measure('width') - 400) / $$('.image_wrapper IMG').length);
+                img.style.left = id*step + "px";
+            })
+        }
+    });
+    if (images[0]) {
+        $('big_img').setAttribute('src', images[0].url);
+    }
+
+    var <?php echo $_block->getJsObjectName(); ?> = new RotateGallery('<?php echo $_block->getHtmlId() ?>', <?php if ($_block->getElement()->getReadonly()):?>null<?php else:?><?php echo $_block->getUploader()->getJsObjectName() ?><?php endif;?>, <?php echo $_block->getImageTypesJson() ?>);
+
+    function fixEvent(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        e = e || window.event
+        if (e.pageX == null && e.clientX != null) {
+            var html = document.documentElement
+            var body = document.body
+            e.pageX = e.clientX + (html && html.scrollLeft || body && body.scrollLeft || 0) - (html.clientLeft || 0);
+        }
+        return e
+    }
+
+
 </script>
