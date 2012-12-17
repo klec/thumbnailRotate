@@ -23,13 +23,22 @@
             </rotate>
         </blocks>
         <events>
+            <core_block_abstract_prepare_layout_after>
+                <observers>
+                    <klec_rotate_image_tab>
+                        <type>model</type>
+                        <class>Klec_Rotate_Model_Observer</class>
+                        <method>addTab</method>
+                    </klec_rotate_image_tab>
+                </observers>
+            </core_block_abstract_prepare_layout_after>
             <adminhtml_catalog_product_edit_element_types>
                 <observers>
-                    <klec_rotate_image_attr>
+                    <klec_rotate_image_tab>
                         <type>model</type>
                         <class>Klec_Rotate_Model_Observer</class>
                         <method>addAttributeType</method>
-                    </klec_rotate_image_attr>
+                    </klec_rotate_image_tab>
                 </observers>
             </adminhtml_catalog_product_edit_element_types>
         </events>
