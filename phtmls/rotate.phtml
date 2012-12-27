@@ -31,44 +31,92 @@
  */
 ?>
 <?php
-    $_product = $this->getProduct();
-    $_helper = $this->helper('catalog/output');
-    $images = $this->getRotateImages();
+$_product = $this->getProduct();
+$_helper = $this->helper('catalog/output');
+$images = $this->getRotateImages();
 ?>
 <style>
-    #rotate-view {border: 0px; width: 370px; height: 370px;}
-    .more-views {display: none;}
+    #rotate-view {
+        border: 0px;
+        width: 370px;
+        height: 370px;
+    }
+
+    .more-views {
+        display: none;
+    }
 </style>
 <?php if (count($this->getRotateImages()) > 0): ?>
 <div id="rotate-view"></div>
 <div class="more-views">
     <?php foreach ($this->getRotateImages() as $_image): ?>
-        <img src="<?php echo $this->helper('catalog/image')->init($this->getProduct(), 'thumbnail', $_image["file"])->resize(370); ?>" width="50" height="50"
-             alt="<?php echo $this->htmlEscape($_image["label"]) ?>" />
+    <img
+        src="<?php echo $this->helper('catalog/image')->init($this->getProduct(), 'thumbnail', $_image["file"])->resize(370); ?>"
+        width="50" height="50"
+        alt="<?php echo $this->htmlEscape($_image["label"]) ?>"/>
 
     <?php endforeach; ?>
 </div>
 <script>
     var images = $$('.more-views IMG');
-    var curent_number = Math.round(images.length/2);
+    var curent_number = Math.round(images.length / 2);
+    var downX = 0;
     setCurImage();
-    function setCurImage(){
-        $("rotate-view").setStyle({backgroundImage:'url('+images[curent_number].src+')'});
+    function setCurImage() {
+        $("rotate-view").setStyle({backgroundImage:'url(' + images[curent_number].src + ')'});
     }
-    autoRotate = setInterval(rRotate, 500);
+    autoRotate = setInterval(rRotate, 500);//@todo add settings to the admin panel
 
-    function rRotate(){
-        if (++curent_number>images.length-1){
+    function rRotate() {
+        if (++curent_number > images.length - 1) {
             curent_number = 0;
         }
         setCurImage();
     }
 
-    function lRotate(){
-        if (--curent_number<0){
-            curent_number = images.length-1;
+    function lRotate() {
+        if (--curent_number < 0) {
+            curent_number = images.length - 1;
         }
         setCurImage();
     }
+    function fixEvent(e) {
+        e.preventDefault ? e.preventDefault() : e.returnValue = false;
+        e = e || window.event
+        if (e.pageX == null && e.clientX != null) {
+            var html = document.documentElement
+            var body = document.body
+            e.pageX = e.clientX + (html && html.scrollLeft || body && body.scrollLeft || 0) - (html.clientLeft || 0);
+        }
+        return e
+    }
+    $("rotate-view")
+        .observe('mouseover',
+        function () {
+            //@todo stop rotate if config set
+        }).observe('mouseout',
+        function () {
+            //@todo start rotate if config set
+        }).observe('mousedown',
+        function (e) {
+            e = fixEvent(e);
+            downX = e.pageX;
+            clearInterval(autoRotate);
+        }).observe('mouseup',
+        function (e) {
+            autoRotate = setInterval(rRotate, 500);//@todo add settings to the admin panel
+            downX = 0;
+        }).observe('mousemove', function (e) {
+            e = fixEvent(e);
+            if (downX != 0) {
+                if (downX < e.pageX) {
+                    rRotate();
+                }
+                if (downX > e.pageX) {
+                    lRotate();
+                }
+                downX = e.pageX;
+            }
+        })
 </script>
 <?php endif; ?>

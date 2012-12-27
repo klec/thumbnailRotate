@@ -10,8 +10,10 @@ $_block = $this;
         <div style="text-align: center">
             <img id="big_img" src="" width="500" alt="sample">
         </div>
-        <div  id="<?php echo $_block->getHtmlId() ?>_list" class="image_wrapper" style="position: relative; height: 152px;">
-            <img src="" id="<?php echo $_block->getHtmlId() ?>_template" class="template no-display" alt="">
+        <div  id="image_scroller" class="hor-scroll" style="height: 170px; margin-bottom: 10px;">
+            <div  id="<?php echo $_block->getHtmlId() ?>_list" class="image_wrapper" style="position: relative; height: 152px;">
+                <span src="" id="<?php echo $_block->getHtmlId() ?>_template" class="template no-display" alt=""/>
+            </div>
         </div>
         <span id="<?php echo $_block->getHtmlId() ?>-image-0" class="no-display">
             <span class="cell-image input a-center no-display">
@@ -34,7 +36,9 @@ $_block = $this;
        name="<?php echo $_block->getElement()->getName() ?>[values]"
        value="<?php echo $_block->htmlEscape($_block->getImagesValuesJson()) ?>"/>
 <script type="text/javascript">
-    Element.addMethods({
+//@todo move javascript to separate
+//@todo add auto order for loaded images
+Element.addMethods({
         move:function (element) {
             if (dragObject.previous() && parseInt(dragObject.previous().style.left) > parseInt(dragObject.style.left)) {
                 temp = dragObject.previous();
@@ -55,53 +59,111 @@ $_block = $this;
                 if (images[i] === element) return i;
             }
             return -1;
-        }
+        },
+        changeopacity: function (element) {
+            var object = element.style;
+            var opacity = (element.removed)?20:90;
+            object.opacity = ( opacity / 100 );
+            object.MozOpacity = ( opacity / 100 );
+            object.KhtmlOpacity = ( opacity / 100 );
+            object.filter = 'alpha(opacity=' + opacity + ')';
+
+    }
     })
 
     //<?php echo $_block->getJsObjectName(); ?>.updateImages = function(){alert('1');}
     var images = <?php echo $_block->getImagesJson() ?>;
     var image_wraper = $('<?php echo $_block->getHtmlId() ?>_list');
-    var step = parseInt(($('page:main-container').measure('width') - 400) / images.length);
+    var step = 200;
     var dragObject = {};
     RotateGallery = Class.create(Product.Gallery,{
         createImageRow: function(img) {
             image_wraper.insert(
-                new Element('img', {src:img.url, style:'height:150px; position:absolute;' })
-                    .observe('mouseover', function () {
-                        $('big_img').setAttribute('src', this.readAttribute('src'));
-                        this.style.zIndex = "10";
-                    }).observe('mouseout', function () {
-                        this.style.zIndex = "1";
-                    }).observe('mousedown', function (e) {
-                        dragObject = this;
+                new Element('img', {
+                    id:this.prepareId(img.file),
+                    src:img.url,
+                    style:'height:150px; position:absolute;',
+                    value_id:img.value_id,
+                    file:img.file,
+                    disabled:0,
+                    removed:0,
+                    label:''
+                }).observe('mouseover', function () {
+                    $('big_img').setAttribute('src', this.readAttribute('src'));
+                    this.style.zIndex = "10";
+                }).observe('mouseout', function () {
+                    this.style.zIndex = "0";
+                }).observe('mousedown', function (e) {
+                    dragObject = this;
+                    dragObject.removed = this.getAttribute('removed')=="1";
+                    e = fixEvent(e);
+                    dragObject.downX = e.pageX;
+                }).observe('mouseup', function (e) {
+                    if(dragObject.style.left == dragObject.getId() * step + "px"){
+                        dragObject.removed=!dragObject.removed;
+                        dragObject.changeopacity();
+                    }
+                    dragObject.style.left = dragObject.getId() * step + "px";
+                    dragObject.setAttribute('removed',(dragObject.removed)?1:0);
+                    dragObject = {};
+                    $('<?php echo $_block->getHtmlId() ?>_save').value = images2json();
+                }).observe('mousemove', function (e) {
+                    if (dragObject.downX) {
                         e = fixEvent(e);
+                        dragObject.style.left = parseInt(dragObject.style.left) + e.pageX - dragObject.downX + "px";
                         dragObject.downX = e.pageX;
-                    }).observe('mouseup', function (e) {
-                        dragObject.style.left = dragObject.getId() * step + "px";
-                        dragObject = {};
-                    }).observe('mousemove', function (e) {
-                        if (dragObject.downX) {
-                            e = fixEvent(e);
-                            dragObject.style.left = parseInt(dragObject.style.left) + e.pageX - dragObject.downX + "px";
-                            dragObject.downX = e.pageX;
-                            dragObject.move();
-                        }
-                    })
+                        dragObject.move();
+                    }
+                })
             );
+            this.updateImages();
         },
         updateVisualisation: function(){
             $$('.image_wrapper IMG').each(function(img, id){
-                step = parseInt(($('page:main-container').measure('width') - 400) / $$('.image_wrapper IMG').length);
+                step = 200;
                 img.style.left = id*step + "px";
             })
+        },
+        updateImages : function() {
+            this.getElement('save').value = images2json();
+            this.images.each( function(row) {
+                if (!$(this.prepareId(row.file))) {
+                    this.createImageRow(row);
+                }
+                this.updateVisualisation(row.file);
+            }.bind(this));
+        },
+        prepareId : function(file) {
+            if (typeof this.file2id[file] == 'undefined') {
+                this.file2id[file] = this.idIncrement++;
+            }
+            return this.containerId + '-image-' + this.file2id[file];
         }
     });
+
     if (images[0]) {
         $('big_img').setAttribute('src', images[0].url);
     }
 
-    var <?php echo $_block->getJsObjectName(); ?> = new RotateGallery('<?php echo $_block->getHtmlId() ?>', <?php if ($_block->getElement()->getReadonly()):?>null<?php else:?><?php echo $_block->getUploader()->getJsObjectName() ?><?php endif;?>, <?php echo $_block->getImageTypesJson() ?>);
+    var <?php echo $_block->getJsObjectName(); ?> = new RotateGallery('<?php echo $_block->getHtmlId() ?>', <?php echo $_block->getUploader()->getJsObjectName() ?>, <?php echo $_block->getImageTypesJson() ?>);
 
+
+    function images2json() {
+        var answer= [];
+        $$('.image_wrapper IMG').each(function(img, id){
+            answer.push({
+                'value_id':(img.getAttribute('value_id')=="undefined")?null:img.getAttribute('value_id'),
+                'file':img.getAttribute('file'),
+                'label':img.getAttribute('label'),
+                'position':id,
+                'url':img.getAttribute('src'),
+                'disabled':0,
+                'removed':img.getAttribute('removed')
+            });
+
+        })
+        return Object.toJSON(answer);
+    }
     function fixEvent(e) {
         e.preventDefault ? e.preventDefault() : e.returnValue = false;
         e = e || window.event
