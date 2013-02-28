@@ -18,6 +18,7 @@ class Klec_Rotate_Model_Setup extends Mage_Eav_Model_Entity_Setup
     function addMediaGallery()
     {
         $attr = array(
+//            'backend' => 'rotate/media',
             'backend' => 'catalog/product_attribute_backend_media',
             'type' => 'varchar',
             'input' => 'rotate',

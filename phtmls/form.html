@@ -1,0 +1,29 @@
+<html>
+<head>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.2/prototype.js" charset="utf-8"></script>
+</head>
+<body>
+<form action="#" id="form">
+    <input type="file" id="ifile" multiple="multiple">
+    <input type="submit">
+</form>
+<script type="text/javascript">
+    var ifile = $("ifile");
+    var img = new Element('img', {id: 'qwe'})
+    Element.insert($("form"),img);
+    var reader = new FileReader();
+    ifile.observe("change", function(){
+        //alert(this);
+        reader.onload = function(e) {
+            img.src = e.target.result;
+            var canvas = $$("#uploadBlocks .file-row CANVAS")[0];
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext("2d").drawImage(img, 0, 0,img.width ,img.height);
+            var file = canvas.mozGetAsFile("foo.png");
+        }
+        reader.readAsDataURL(this.files[0]);
+    });
+</script>
+</body>
+</html>

@@ -15,17 +15,6 @@ $_block = $this;
                 <span src="" id="<?php echo $_block->getHtmlId() ?>_template" class="template no-display" alt=""/>
             </div>
         </div>
-        <span id="<?php echo $_block->getHtmlId() ?>-image-0" class="no-display">
-            <span class="cell-image input a-center no-display">
-                <input type="radio"  name="image" value="no_selection" />
-            </span>
-            <span class="cell-thumbnail input a-center no-display">
-                <input type="radio"  name="thumbnail" value="no_selection" />
-            </span>
-            <span class="cell-small_image input a-center no-display">
-                <input type="radio"  name="small_image" value="no_selection" />
-            </span>
-        </span>
         <?php echo $_block->getUploaderHtml() ?>
     </div>
 </div>
@@ -36,7 +25,7 @@ $_block = $this;
        name="<?php echo $_block->getElement()->getName() ?>[values]"
        value="<?php echo $_block->htmlEscape($_block->getImagesValuesJson()) ?>"/>
 <script type="text/javascript">
-//@todo move javascript to separate
+//@todo move javascript to separate file
 //@todo add auto order for loaded images
 Element.addMethods({
         move:function (element) {
@@ -62,7 +51,7 @@ Element.addMethods({
         },
         changeopacity: function (element) {
             var object = element.style;
-            var opacity = (element.removed)?20:90;
+            var opacity = (element.removed)?20:100;
             object.opacity = ( opacity / 100 );
             object.MozOpacity = ( opacity / 100 );
             object.KhtmlOpacity = ( opacity / 100 );
@@ -71,10 +60,9 @@ Element.addMethods({
     }
     })
 
-    //<?php echo $_block->getJsObjectName(); ?>.updateImages = function(){alert('1');}
     var images = <?php echo $_block->getImagesJson() ?>;
     var image_wraper = $('<?php echo $_block->getHtmlId() ?>_list');
-    var step = 200;
+    var step = 150;
     var dragObject = {};
     RotateGallery = Class.create(Product.Gallery,{
         createImageRow: function(img) {
@@ -82,7 +70,7 @@ Element.addMethods({
                 new Element('img', {
                     id:this.prepareId(img.file),
                     src:img.url,
-                    style:'height:150px; position:absolute;',
+                    style:'height:150px; position:absolute;',//todo move to CSS
                     value_id:img.value_id,
                     file:img.file,
                     disabled:0,
@@ -120,7 +108,6 @@ Element.addMethods({
         },
         updateVisualisation: function(){
             $$('.image_wrapper IMG').each(function(img, id){
-                step = 200;
                 img.style.left = id*step + "px";
             })
         },
@@ -148,7 +135,7 @@ Element.addMethods({
     var <?php echo $_block->getJsObjectName(); ?> = new RotateGallery('<?php echo $_block->getHtmlId() ?>', <?php echo $_block->getUploader()->getJsObjectName() ?>, <?php echo $_block->getImageTypesJson() ?>);
 
 
-    function images2json() {
+    function images2json() { //@todo move to RotateGallery class
         var answer= [];
         $$('.image_wrapper IMG').each(function(img, id){
             answer.push({

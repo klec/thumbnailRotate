@@ -4,6 +4,7 @@
     <modules>
         <Klec_Rotate>
             <version>0.1.0</version>
+            <!--<version>9.0.0</version>-->
         </Klec_Rotate>
     </modules>
     <frontend>
@@ -43,9 +44,9 @@
             </adminhtml_catalog_product_edit_element_types>
         </events>
         <models>
-            <klec_rotate>
+            <rotate>
                 <class>Klec_Rotate_Model</class>
-            </klec_rotate>
+            </rotate>
         </models>
         <resources>
             <rotate_setup>
