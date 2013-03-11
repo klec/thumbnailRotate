@@ -3,7 +3,7 @@
     <modules>
         <Klec_Rotate>
             <active>true</active>
-            <codePool>core</codePool>
+            <codePool>local</codePool>
             <depends>
                 <Mage_Media />
             </depends>

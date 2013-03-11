@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<config>
+    <tabs>
+        <catalog translate="label" module="catalog">
+            <label>Catalog</label>
+            <sort_order>200</sort_order>
+        </catalog>
+    </tabs>
+    <sections>
+        <catalog>
+            <groups>
+                <rotate translate="label">
+                    <label>Product Images Rotator</label>
+                    <!--<clone_fields>1</clone_fields>-->
+                    <!--<clone_model>adminhtml/system_config_clone_media_image</clone_model>-->
+                    <sort_order>350</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <types>
+                            <label>Use image rotator for selected types</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>20</sort_order>
+                            <source_model>rotate/types</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <can_be_empty>1</can_be_empty>
+                        </types>
+                    </fields>
+                </rotate>
+            </groups>
+        </catalog>
+    </sections>
+</config>
