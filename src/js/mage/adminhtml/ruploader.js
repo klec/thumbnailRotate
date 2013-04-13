@@ -108,8 +108,9 @@ RUploader.prototype = {
     upload: function()
     {
         //@todo select canvas from upload block;
+        var canvas = $(this.containerId+"-file-undefined").down('canvas');
         var file = canvas.mozGetAsFile("foo.png");
-        that.sendFile(file);
+        this.sendFile(file);
 
 //        var iframes = $$("#uploadBlocks .uploadBlock iframe");
 //        var lastFormsNumber = iframes.length - 1;
