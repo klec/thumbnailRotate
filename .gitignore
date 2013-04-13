@@ -15,6 +15,15 @@ local.properties
 .classpath
 .settings/
 .loadpath
+src/
+!src/app/code/local/
+!src/app/design/adminhtml/default/default/template/media/ruploader.phtml
+!src/app/design/adminhtml/default/default/template/catalog/product/rotate_form.phtml
+!src/app/design/frontend/base/default/layout/rotate.xml
+!src/app/design/frontend/base/default/template/catalog/product/view/rotate.phtml
+!src/js/mage/adminhtml/ruploader.js
+!src/app/etc/modules/Klec_Rotate.xml
+
 
 # External tool builders
 .externalToolBuilders/
