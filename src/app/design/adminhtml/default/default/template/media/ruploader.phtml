@@ -1,0 +1,76 @@
+<?php
+/**
+ * Magento Enterprise Edition
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Magento Enterprise Edition License
+ * that is bundled with this package in the file LICENSE_EE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.magentocommerce.com/license/enterprise-edition
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2011 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://www.magentocommerce.com/license/enterprise-edition
+ */
+?>
+<?php
+/**
+ * @var $this Mage_Adminhtml_Block_Media_Uploader
+ */
+?>
+
+<?php echo $this->helper('adminhtml/media_js')->includeScript('mage/adminhtml/ruploader.js') ?>
+<?php //echo $this->helper('adminhtml/media_js')->includeScript('dull/uploader/uploader.js'); //@todo remove DULL folder ?>
+<?php echo $this->helper('adminhtml/media_js')->getTranslatorScript() ?>
+
+
+<div id="<?php echo $this->getHtmlId() ?>" class="uploader">
+    <div>
+        <input type="file" name="images[]" id="rotate_upload_images" multiple="multiple"/>
+    </div>
+    <div id="buttons" style="float:left;margin-right: 0.5em;"></div>
+    <?php  echo $this->getBrowseButtonHtml();  ?><?php  echo $this->getUploadButtonHtml();  ?>
+</div>
+<div id="uploadBlocks" class="uploader"></div>
+<div class="clear"></div>
+<div class="no-display" id="<?php echo $this->getHtmlId() ?>-template">
+    <div id="{{id}}" class="file-row">
+        <canvas alt="" class="no-display"></canvas>
+        <img src="#" alt=""/>
+        <span class="file-info">{{name}} ({{size}})</span>
+
+        <div class="clear"></div>
+    </div>
+</div>
+<div class="no-display" id="<?php echo $this->getHtmlId() ?>-template-progress">
+    {{percent}}% {{uploaded}} / {{total}}
+</div>
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[
+
+    var maxUploadFileSizeInBytes = <?php echo $this->getDataMaxSizeInBytes() ?>;
+    var maxUploadFileSize = '<?php echo $this->getDataMaxSize() ?>';
+
+    <?php echo $this->getHtmlId(); ?>JsObject = new RUploader('<?php echo $this->getHtmlId() ?>', <?php echo $this->getConfigJson() ?>);
+
+    if (varienGlobalEvents) {
+        varienGlobalEvents.attachEventHandler('tabChangeBefore', <?php echo $this->getJsObjectName() ?>.onContainerHideBefore
+    )
+        ;
+    }
+
+    //]]>
+</script>
