@@ -44,7 +44,7 @@ class Klec_Rotate_Block_Form_Gallery_Content extends Mage_Adminhtml_Block_Widget
     protected function _prepareLayout()
     {
         $this->setChild('uploader',
-            $this->getLayout()->createBlock('adminhtml/media_uploader')
+            $this->getLayout()->createBlock('rotate/uploader')
         );
 
         $this->getUploader()->getConfig()
